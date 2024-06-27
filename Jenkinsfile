@@ -14,7 +14,7 @@ pipeline {
         stage('Prepare') {
             steps {
                 // Clean workspace
-                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/adarshlokhandegithub/game-app']])
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/adarshlokhandegithub/game-app']])
             }
         }
         
