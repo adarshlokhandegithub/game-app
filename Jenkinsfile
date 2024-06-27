@@ -24,13 +24,6 @@ pipeline {
                 script {
                     // Build Docker image using Dockerfile
                     def dockerImage = docker.build(env.dockerImage, "--file ${env.dockerfilePath} .")
-                }
-            }
-        }
-
-        stage('Pushing Docker Image to ACR') {
-            steps {
-                script {
                     // Login to Azure Container Registry
                     docker.withRegistry('https://azjenkinsvmcr.azurecr.io', env.registryCredential) {
                         // Push built Docker image to Azure Container Registry
@@ -39,7 +32,7 @@ pipeline {
                 }
             }
         }
-    
+
         stage('Deploy') {
             steps {
                 script {
