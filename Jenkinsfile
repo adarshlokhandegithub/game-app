@@ -34,17 +34,19 @@ pipeline {
             }
         }
 
-      stage('Semgrep-Scan') {
+        stage('Semgrep-Scan') {
     steps {
         script {
-            sh 'pip3 install semgrep'
-            withEnv(['SEMGREP_HOME=/var/lib/jenkins/semgrep_home']) {
-                sh 'semgrep ci'
-            }
+            docker.pull('returntocorp/semgrep:latest')
+            docker.image('returntocorp/semgrep:latest').run(
+                "--rm -e SEMGREP_APP_TOKEN=${SEMGREP_APP_TOKEN} " +
+                "-v /var/lib/jenkins/workspace/NodeJS\\ Game\\ APP:/var/lib/jenkins/workspace/NodeJS\\ Game\\ APP " +
+                "--workdir /var/lib/jenkins/workspace/NodeJS\\ Game\\ APP " +
+                "semgrep ci"
+            )
         }
     }
 }
-
 
 
         stage('Deploy') {
