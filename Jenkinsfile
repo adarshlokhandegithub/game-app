@@ -31,13 +31,16 @@ pipeline {
 
         stage('Pushing Docker Image to ACR') {
             steps {
-                // Login to Azure Container Registry
+                script {
+                    // Login to Azure Container Registry
                     docker.withRegistry('https://azjenkinsvmcr.azurecr.io', env.registryCredential) {
                         // Push built Docker image to Azure Container Registry
                         dockerImage.push()
+                    }
+                }
             }
         }
-
+    
         stage('Deploy') {
             steps {
                 script {
