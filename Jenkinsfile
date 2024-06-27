@@ -35,13 +35,21 @@ pipeline {
         }
 
         stage('Semgrep-Scan') {
-        steps {
-                    sh '''docker pull semgrep/semgrep && \
-                    docker run \
-                    -e SEMGREP_APP_TOKEN=$SEMGREP_APP_TOKEN \
-                    -v "$(/var/lib/jenkins/workspace/nodejsappcicd):$(/var/lib/jenkins/workspace/nodejsappcicd)" --workdir $(/var/lib/jenkins/workspace/nodejsappcicd) \
-                    semgrep/semgrep semgrep ci '''
-          }
+            steps {
+                script {
+                    // Ensure workspace path is properly formatted
+                    def workspacePath = "/var/lib/jenkins/workspace/NodeJS Game APP".replaceAll(' ', '\\ ')
+                    
+                    // Run semgrep analysis
+                    sh """docker pull semgrep/semgrep &&
+                          docker run \\
+                          -e SEMGREP_APP_TOKEN='${env.SEMGREP_APP_TOKEN}' \\
+                          -v ${workspacePath}:/workdir \\
+                          --workdir /workdir \\
+                          semgrep/semgrep semgrep ci
+                       """
+                }
+            }
         }
 
         stage('Deploy') {
