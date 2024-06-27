@@ -34,21 +34,11 @@ pipeline {
             }
         }
 
-        stage('Semgrep Scan...') {
-            steps {
-                script {
-                    // Run semgrep analysis
-                    def scanResult = sh(script: "semgrep --config=p/r2c/javascript-security --json ./*.js", returnStdout: true)
-                    
-                    // Save scan results to a file
-                    writeFile file: 'semgrep-results.json', text: scanResult
-                    
-                    // Upload results to semgrep platform
-                    withCredentials([string(credentialsId: env.SEMGREP_APP_TOKEN, variable: 'SEMGREP_API_KEY')]) {
-                        sh "semgrep --json --upload --config p/r2c/javascript-security --token ${SEMGREP_API_KEY} semgrep-results.json"
-                    }
-                }
-            }
+        stage('Semgrep-Scan') {
+        steps {
+              sh 'pip3 install semgrep'
+              sh 'semgrep ci'
+          }
         }
 
         stage('Deploy') {
