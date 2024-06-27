@@ -35,11 +35,16 @@ pipeline {
         }
 
       stage('Semgrep-Scan') {
-        steps {
-          sh 'pip3 install semgrep'
-          sh 'semgrep ci'
-      }
+    steps {
+        script {
+            sh 'pip3 install semgrep'
+            withEnv(['SEMGREP_HOME=/var/lib/jenkins/semgrep_home']) {
+                sh 'semgrep ci'
+            }
+        }
     }
+}
+
 
 
         stage('Deploy') {
