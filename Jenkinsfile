@@ -38,7 +38,9 @@ pipeline {
     steps {
         script {
             // Pull the Semgrep Docker image
-            docker.pull('semgrep/semgrep')
+            docker.withRegistry('', env.registryCredential) {
+                docker.pull('semgrep/semgrep')
+            }
 
             // Run Semgrep scan
             docker.image('semgrep/semgrep').run(
@@ -49,6 +51,7 @@ pipeline {
         }
     }
 }
+
 
 
 
