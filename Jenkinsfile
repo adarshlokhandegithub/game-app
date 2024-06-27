@@ -9,6 +9,7 @@ pipeline {
         dockerfilePath = './Dockerfile' // Path to your Dockerfile in the repo
         azureCredentials = 'AzureServicePrincipal' // Azure Service Principal credentials
         SEMGREP_APP_TOKEN = credentials('SEMGREP_APP_TOKEN')
+        SNYK_API_TOKEN = ''
     }
     
     stages {
