@@ -34,7 +34,7 @@ pipeline {
             }
         }
 
-        stage('Semgrep-Scan') {
+      /*  stage('Semgrep-Scan') {
     steps {
         script {
             docker.pull('returntocorp/semgrep:latest')
@@ -46,9 +46,18 @@ pipeline {
             )
         }
     }
-}
+}   */
 
+        stage('Security Scan with Snyk') {
+            steps {
+                withCredentials([string(credentialsId: 'SNYK_API_TOKEN', variable: 'SNYK_TOKEN')]) {
+                    sh "snyk code test --org=3913c198-f62a-43d2-b422-e5a8cd54159a"
+                    sh "snyk test --json > snyk-report.json"
+                }
+            }
+        }
 
+        
         stage('Deploy') {
             steps {
                 script {
