@@ -35,22 +35,14 @@ pipeline {
         }
 
         stage('Semgrep-Scan') {
-    steps {
-        script {
-            // Pull the Semgrep Docker image
-            docker.withRegistry('', env.registryCredential) {
-                docker.pull('semgrep/semgrep')
-            }
-
-            // Run Semgrep scan
-            docker.image('semgrep/semgrep').run(
-                "--rm -e SEMGREP_APP_TOKEN=${env.SEMGREP_APP_TOKEN} " +
-                "-v ${env.WORKSPACE}:/workspace --workdir /workspace " +
-                "semgrep ci"
-            )
-        }
+        steps {
+            sh '''docker pull returntocorp/semgrep && \
+            docker run \
+            -e SEMGREP_APP_TOKEN=$SEMGREP_APP_TOKEN \
+            -v "$(pwd):$(pwd)" --workdir $(pwd) \
+            returntocorp/semgrep semgrep ci '''
+      }
     }
-}
 
 
 
