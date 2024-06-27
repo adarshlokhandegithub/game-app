@@ -34,27 +34,13 @@ pipeline {
             }
         }
 
-        stage('Semgrep-Scan') {
-            steps {
-                script {
-                    docker.withRegistry('', 'ACR') {
-                        // Pull the Semgrep Docker image
-                        docker.pull('returntocorp/semgrep:latest')
-
-                        // Run Semgrep scan
-                        docker.image('returntocorp/semgrep:latest').run(
-                            "--rm -e SEMGREP_APP_TOKEN=${SEMGREP_APP_TOKEN} " +
-                            "-v /var/lib/jenkins/workspace/NodeJS\\ Game\\ APP:/var/lib/jenkins/workspace/NodeJS\\ Game\\ APP " +
-                            "--workdir /var/lib/jenkins/workspace/NodeJS\\ Game\\ APP " +
-                            "semgrep ci"
-                        )
-                    }
-                }
-            }
-        }
-
-
-
+        stages {
+      stage('Semgrep-Scan') {
+        steps {
+          sh 'pip3 install semgrep'
+          sh 'semgrep ci'
+      }
+    }
 
 
         stage('Deploy') {
