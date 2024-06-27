@@ -36,14 +36,20 @@ pipeline {
 
         stage('Semgrep-Scan') {
     steps {
-                sh '''docker pull semgrep/semgrep &&
-                docker run \
-                -e SEMGREP_APP_TOKEN=$SEMGREP_APP_TOKEN \
-                -v "$(pwd):/var/lib/jenkins/workspace/NodeJS Game APP" --workdir /var/lib/jenkins/workspace/NodeJS Game APP \
-                semgrep/semgrep semgrep ci
-                '''
-            }
+        script {
+            // Pull the Semgrep Docker image
+            docker.pull('semgrep/semgrep')
+
+            // Run Semgrep scan
+            docker.image('semgrep/semgrep').run(
+                "--rm -e SEMGREP_APP_TOKEN=${env.SEMGREP_APP_TOKEN} " +
+                "-v ${env.WORKSPACE}:/workspace --workdir /workspace " +
+                "semgrep ci"
+            )
         }
+    }
+}
+
 
 
 
