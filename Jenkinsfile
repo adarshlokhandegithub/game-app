@@ -9,7 +9,7 @@ pipeline {
         dockerfilePath = './Dockerfile' // Path to your Dockerfile in the repo
         azureCredentials = 'AzureServicePrincipal' // Azure Service Principal credentials
         SEMGREP_APP_TOKEN = credentials('SEMGREP_APP_TOKEN')
-        SNYK_API_TOKEN = ''
+        //SNYK_API_TOKEN = ''
     }
     
     stages {
@@ -51,10 +51,10 @@ pipeline {
 
         stage('Security Scan with Snyk') {
             steps {
-                withCredentials([string(credentialsId: 'SNYK_API_TOKEN', variable: 'SNYK_TOKEN')]) {
+                //withCredentials([string(credentialsId: 'SNYK_API_TOKEN', variable: 'SNYK_TOKEN')]) {
                     sh "snyk code test --org=3913c198-f62a-43d2-b422-e5a8cd54159a"
                     sh "snyk test --json > snyk-report.json"
-                }
+                //}
             }
         }
 
