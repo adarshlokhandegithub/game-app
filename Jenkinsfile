@@ -8,6 +8,7 @@ pipeline {
         resourceGroup = 'jenkins-rg' // Azure Resource Group
         dockerfilePath = './Dockerfile' // Path to your Dockerfile in the repo
         azureCredentials = 'AzureServicePrincipal' // Azure Service Principal credentials
+        SEMGREP_APP_TOKEN = credentials('SEMGREP_APP_TOKEN')
     }
     
     stages {
@@ -28,6 +29,23 @@ pipeline {
                     docker.withRegistry('https://azjenkinsvmcr.azurecr.io', env.registryCredential) {
                         // Push built Docker image to Azure Container Registry
                         dockerImage.push()
+                    }
+                }
+            }
+        }
+
+        stage('Semgrep Scan...') {
+            steps {
+                script {
+                    // Run semgrep analysis
+                    def scanResult = sh(script: "semgrep --config=p/r2c/javascript-security --json ./*.js", returnStdout: true)
+                    
+                    // Save scan results to a file
+                    writeFile file: 'semgrep-results.json', text: scanResult
+                    
+                    // Upload results to semgrep platform
+                    withCredentials([string(credentialsId: env.SEMGREP_APP_TOKEN, variable: 'SEMGREP_API_KEY')]) {
+                        sh "semgrep --json --upload --config p/r2c/javascript-security --token ${SEMGREP_API_KEY} semgrep-results.json"
                     }
                 }
             }
