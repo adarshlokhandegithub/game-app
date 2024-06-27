@@ -24,7 +24,6 @@ pipeline {
                 script {
                     // Build Docker image using Dockerfile
                     def dockerImage = docker.build(env.dockerImage, "--file ${env.dockerfilePath} .")
-                    }
                 }
             }
         }
